@@ -9,7 +9,7 @@ log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs')
 os.makedirs(log_dir, exist_ok=True)
 
 # 로그 파일명 설정 (월_일_시_분_초.txt)
-timestamp = datetime.now().strftime('%m_%d_%H_%M_%S')
+timestamp = datetime.now().strftime('%Y%m%d_%H%M_%S')
 log_filename = f"{timestamp}.txt"
 log_path = os.path.join(log_dir, log_filename)
 
@@ -43,14 +43,14 @@ def monitor_callback(timestamp, tast, voltage, current):
 if __name__ == "__main__":
     try:
         print_and_log(f"[TEST] 로그 파일: {os.path.abspath(log_path)}")
-        print_and_log("[TEST] Memory 모드 (채널 10) 용접 + 모니터링")
+        print_and_log(f"[TEST] Memory 모드 (채널: {memory_channel})")
         
         # 모니터링 콜백 함수 전달
         send_memory_mode_welding(
-            memory_channel=10, 
-            weld_duration_sec=2.0, 
+            memory_channel=11, 
+            weld_duration_sec=6.0, 
             monitor=True,
-            monitor_interval=0.1,
+            monitor_interval=0.005,
             monitor_callback=monitor_callback
         )
 
@@ -68,26 +68,3 @@ if __name__ == "__main__":
         print_and_log(f"[ERROR] 테스트 중 오류 발생: {e}")
     
     print_and_log("[TEST] 테스트 완료")
-
-# # tests/test_memory_mode.py
-
-# import sys, os, time
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
-# from devices.kemppi.memory_mode import send_memory_mode_welding
-# from devices.kemppi.status_reader import read_status_values
-# from core.modbus_client import create_modbus_client
-
-# if __name__ == "__main__":
-#     print("[TEST] Memory 모드 (채널 5) 용접 + 모니터링")
-#     send_memory_mode_welding(memory_channel=10, weld_duration_sec=2.0, monitor=True, monitor_interval=0.1)
-
-#     print("[TEST] 용접 직후 상태값 읽기")
-#     client = create_modbus_client()
-#     try:
-#         data = read_status_values(client)
-#         print(f"[STATUS] TAST={data['TAST']}, Voltage={data['Voltage']}, Current={data['Current']}")
-#     except Exception as e:
-#         print(f"[STATUS] 오류: {e}")
-#     finally:
-#         client.close()
